@@ -1,30 +1,57 @@
-# 12.6 Bonus 연결리스트
-* 연결리스트에서 포인터를 사용하는 이유   
-   1. 동적 할당 받아서 연결 리스트를 구현하니까   
-   2. 포인터의 기능 중 하나인 외부에서도 이 변수를 사용할거니까!   
+# 0. libft에서 무엇을 얻을 수 있는가?   
+> 메이크 파일을 통해서 빌드를 위한 프로젝트 작성하는 방법    
     
-* 연결리스트 함수 중 일부에서 더블 포인터를 받는 이유   
-   1. C에서는 매개변수가 스택에 복사되기 때문에 그냥 포인터로 전달하면 매개변수에 포인터 변수가 복사됨   
-   2. 더블 포인터로 전달하면 \* 연산자로 
-   3. 이중 포인터일 때 메인함수에 있는 포인터 변수와 연결할 수 있기 때문에   
-
-# 11.25~27 Part1 단위 테스트로 디버깅 및 코딩 표준 고치기   
-* memo    
-  * ft_atoi - 19자리 이상 시 리턴 값 수정   
+> 리눅스에서 정적 라이브러리를 빌드하는 과정   
+    
+> C의 라이브러리 중 문자열, 메모리, 리스트 함수의 내부 이해   
+    
+> C 스타일 문자열 조작, 포인터, 동적할당에 대한 이해    
+<br>
+    
+# 1. How to write Makefile     
+* makefile 작성   
+메이크파일에서 수를 선언해서 전제 조건에 변수를 사용할 때 1개씩 가져오는 것이 아니라 여러 개 한꺼번에 가져온다   
+반면에 변수를 선언해서 타겟에 넣으면 변수에 있는 값들을 1개씩 넣어준다   
+    
+<pre>
+<code>
+$(OBJS) : $(SRCS)
+$(CC) $(CFLAGS) -c $< -o $@ -MD
+</code>
+</pre>
+   
+* src  
+메이크 파일에 대한 기본적인 설명 https://bowbowbow.tistory.com/12   
+메이크 파일을 어떻게 사용할까? https://modoocode.com/311   
+메이크 파일 기초 사용 법 https://www.joinc.co.kr/w/Site/C/Documents/minzkn_make
+메이크 파일 확장자 규칙 https://mintnlatte.tistory.com/433
+<br>
+   
+# 2. Reproduce C libraray fuction
+  
+## ft_atoi   
+19자리 이상 시 리턴 값      
 atoi에서 64비트 int보다 큰 값이 들어올 때   
 양수기준으로 클 때는 -1 반환   
-음수기준으로 더 큰 값이 들어올 때는 0 반환   
-  * ft_strlact - 리턴 값 수정   
+음수기준으로 더 큰 값이 들어올 때는 0 반환
+<br>    
+   
+## ft_strlact    
 dstsize가 dst + src 크기보다 큰 경우 : 모두 잘 붙여지고 dst+src반환   
 dstsize가 dst보다는 크지만 src까지 합 한 것보다 작은 경우 : 잘려서 붙여지고 dst+src반환   
 dstsize가 dst보다도 작은 경우 : src반환 + dstsize   
-세번째 경우 dst + src 에서 반환값을 빼면 dstsize에 추가해야할 값을 알 수 있다   
+세번째 경우 dst + src 에서 반환값을 빼면 dstsize에 추가해야할 값을 알 수 있다
+<br>
+    
+## ft_strchr    
+매개변수를 int로 받는 이유   
    
-  * ft_strchr - 매개변수를 int로 받는 이유   
     *ft_strchr의 사례   
 오버플로우가 생겨도 그냥 형 변환할 때 그 비트 패턴에 맞는에 맞는 걸 허용하는 함수임 아래 ft_isascii와는 조금 다름   
+   
     *ft_isascii의 사례   
-매개변수가 char일 때는 오버플로우 언더플오우 신경을 써야 하지만 int일 경우에는 신경을 쓸 필요가 없다(21억을 넘는 값이 들어와서 오버플로우가 나는 경우가 아니면)   
+매개변수가 char일 때는 오버플로우 언더플오우 신경을 써야 하지만 int일 경우에는 신경을 쓸 필요가 없다    
+(21억을 넘는 값이 들어와서 오버플로우가 나는 경우가 아니면)   
 
 <pre>
 <code>
@@ -38,15 +65,14 @@ int	ft_isascii(int c)
 }
 </code>
 </pre>
-   
-  * ft_memmove   
+## ft_memmove   
     * void 간접 참조 대입   
 void 일때는 간접 참조로 대입을 못 한다   
     * malloc 없이 overlap 구현   
 dst가 src보다 주소값이 클 때는 overlap이 되기 때문에 뒤에서 복사   
 src가 dst보다 주소값이 클 때는 앞에서 복사   
    
-  * ft_memcmp   
+## ft_memcmp   
     * 바이트 값을 비교할 때 unsigned char를 사용해야 한다   
 1바이트에 있는 값에서 서로 큰지 비교하는데 unsigned를 사용하지 않으면 음수가 되서    
 return 값인 매개변수끼리 뺄셈이 잘못되어 버린다   
@@ -150,26 +176,17 @@ return 값인 매개변수끼리 뺄셈이 잘못되어 버린다
 </code>
 </pre>
 
-* time      
-23개 C라이브러리 함수 디버깅   
 
-# 11.25(수) How to make Makefile   
-* memo   
-makefile 작성   
-메이크파일에서 수를 선언해서 전제 조건에 변수를 사용할 때 1개씩 가져오는 것이 아니라 여러 개 한꺼번에 가져온다   
-반면에 변수를 선언해서 타겟에 넣으면 변수에 있는 값들을 1개씩 넣어준다   
-    
-<pre>
-<code>
-$(OBJS) : $(SRCS)
-$(CC) $(CFLAGS) -c $< -o $@ -MD
-</code>
-</pre>
+<br>
    
-* src  
-메이크 파일에 대한 기본적인 설명 https://bowbowbow.tistory.com/12   
-메이크 파일을 어떻게 사용할까? https://modoocode.com/311   
-메이크 파일 기초 사용 법 https://www.joinc.co.kr/w/Site/C/Documents/minzkn_make
-메이크 파일 확장자 규칙 https://mintnlatte.tistory.com/433
+# 3. Bonus 연결리스트 함수 구현하기   
+* 연결리스트에서 포인터를 사용하는 이유   
+   1. 동적 할당 받아서 연결 리스트를 구현하니까   
+   2. 포인터의 기능 중 하나인 외부에서도 이 변수를 사용할거니까!   
+    
+* 연결리스트 함수 중 일부에서 더블 포인터를 받는 이유   
+   1. C에서는 매개변수가 스택에 복사되기 때문에 그냥 포인터로 전달하면 매개변수에 포인터 변수가 복사됨   
+   2. 더블 포인터로 전달하면 \* 연산자로 
+   3. 이중 포인터일 때 메인함수에 있는 포인터 변수와 연결할 수 있기 때문에   
 
-* time 3.00   
+
